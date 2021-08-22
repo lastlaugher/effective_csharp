@@ -35,5 +35,19 @@ var q2 = q.Where(s => s.StartWith(start));
 - C++에서는 const가 런타임 상수, constexpr이 컴파일타임 상수이므로 주의한다.
   
 ### Item3: 캐스트보다는 is, as가 좋다.
+- 형변환 수행 방법 두가지
+  - as 연산자
+    - 더 방어적인 코드를 작성하기 위해 우선 is 연산자로 형변환 가능한지 확인 후에 실제 형변환 할 수도 있음
+  - 캐스트 연산자
+- as 연산자는 사용자 정의 형변환이 지원되지 않으므로, 런타임에 객체의 타입이 변환하려는 타입과 정확히 일치할 경우에만 형변환이 가능하다. (더 안전하고 효율적임)
+- 캐스트 연산자는 InvalidCastException을 발생시키므로 try/catch 문이 필요하다. (as 연산자가 더 깔끔함)
+  
+### Item4: string.Format()을 보간 문자열(string interpolation)으로 대체하라
+  
+
+  
+
+  
+ 
   
   
