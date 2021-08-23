@@ -106,8 +106,25 @@ public static void ExceptionMessage(object thisCantBeNull)
 - 이름 바꾸기 작업등의 리팩토링 작업을 수행할 때 실수를 줄일 수 있다.
 - 인자의 이름을 전달해야하는 매개 변수에 정확히 그 값을 전달할 수 있다.
   
-## Item 7: deligate를 이용하여 callback을 표현하라
+## Item 7: 델리게이트(deligate)를 이용하여 callback을 표현하라
+C#에서 callback 함수는 델리게이트를 이용하여 표현된다. (C++의 function object와 비슷)
+
+미리 정의 되어 있는 델리게이트
+- Predicate<>: 조건을 검사하여 bool을 리턴
+- Func<>: 여러개의 매겨변수를 받아 단일 결과를 리턴, Func<T, bool>과 Predicate<T>는 동일함
+- Action<>: 여러개의 매개변수를 받아 void를 리턴
+
+LINQ에서 델리게이트를 인자로 받아서 콜백을 수행한다. 
+```C#
+List<int> numbers = Enumerable.Range(1, 200).ToList();
+
+var oddNumbers = numbers.Find(n => n % 2 == 1);
+var test = numbers.TrueForAll(n => n < 50);
+numbers.RemoveAll(n => n % 2 == 0);
+numbers.ForEach(item => Console.WriteLine(item));
+```
   
+델리게이트는 기본적으로 멀티캐스트가 가능하다. 멀티캐스트 델리게이트인 경우에 반환값은 멀티케이스 체인에서 마지막으로 호출된 함수의 반환값이 되며 다른 반환값은 모두 무시된다.
   
-  
+## Item 8: 이벤트 호출 시에는 null 조건 연산자를 사용하라
   
