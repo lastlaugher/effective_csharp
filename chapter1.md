@@ -74,7 +74,40 @@ public static string ToGerman(FormattableString src)
 }
 ```
   
-### Item 6: nameof() 연산자를 적극 활용하라
-
+## Item 6: nameof() 연산자를 적극 활용하라
+nameof() 연산자는 심볼 그 자체를 해당 심볼을 포함하는 문자열로 대체해준다. 아래는 가장 일반적인 활용 예시이다.
+```C#
+public string Name
+{
+  get
+  {
+    return name;
+  }
+  set
+  {
+    if (value != name)
+    {
+      name = value;
+      PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Name));
+    }
+  }
+}   
+```
+```C#
+public static void ExceptionMessage(object thisCantBeNull)
+{
+    if (thisCantBeNull == null)
+        throw new ArgumentNullException(nameof(thisCantBeNull),
+                "We told you this can't be null");
+}
+```
+  
+하드코딩 대비 nameof() 연산자의 장점
+- 이름 바꾸기 작업등의 리팩토링 작업을 수행할 때 실수를 줄일 수 있다.
+- 인자의 이름을 전달해야하는 매개 변수에 정확히 그 값을 전달할 수 있다.
+  
+## Item 7: deligate를 이용하여 callback을 표현하라
+  
+  
   
   
