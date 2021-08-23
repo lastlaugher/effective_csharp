@@ -125,6 +125,34 @@ numbers.ForEach(item => Console.WriteLine(item));
 ```
   
 델리게이트는 기본적으로 멀티캐스트가 가능하다. 멀티캐스트 델리게이트인 경우에 반환값은 멀티케이스 체인에서 마지막으로 호출된 함수의 반환값이 되며 다른 반환값은 모두 무시된다.
+```C#
+public void LengthyOperation(Func<bool> pred)
+{
+  ...
+}
+  
+Func<bool> cp = () => CheckWithUser();
+cp += () => CheckWithSystem();
+c.LengthyOperation(cp);
+```  
   
 ## Item 8: 이벤트 호출 시에는 null 조건 연산자를 사용하라
+델리게이트로 선언된 이벤트에 결합된 이벤트가 없으면 NullReferenceExpception 이 발생하게 된다. 다음과 같이 null 체크를 하면 대부분 잘 동작하지만 if 문과 실행문 사이에 다른 스레드에서 이벤트 핸들러 등록을 취소하면 여전히 문제가 발생한다.
+```C#
+public void RaiseUpdates()
+{
+  counter++;
+  if (Updated != null)
+    Updated(this, counter);
+}
+```
+  
+이런 경우에는 null 조건 연산자(null conditional operator)를 사용하면 간단하게 해결이 가능하다. ? 연산자 뒤에는 ()를 붙여 호출할 수 없으므로 Invoke 메서드를 사용해야 한다. C# 컴파일러는 모든 델리게이트와 이벤트에 대하여 Invoke() 메서드를 생성해준다.
+```C#
+public void RaiseUpdates()
+{
+  counter++;
+  Updated?.Invoke(this, counter);
+}
+```
   
