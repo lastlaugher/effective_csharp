@@ -155,4 +155,22 @@ public void RaiseUpdates()
   Updated?.Invoke(this, counter);
 }
 ```
+
+## Item 9: 박싱과 언박싱을 최소화화라
+- 박싱
+  - 값 타입의 객체를 임의의 참조 타입 내부에 포함시키는 방법이다. 
+  - 참조 타입이 필요한 경우에도 값 타입을 쓸 수 있다.
+  - 새롭게 생성된 참조 타입의 객체는 힙에 생성되며, 값 타입의 복사본이 새롭게 생성된 객체 내부에 저장된다.
+    ![](https://docs.microsoft.com/ko-kr/dotnet/csharp/programming-guide/types/media/boxing-and-unboxing/boxing-operation-i-o-variables.gif)
+
+- 언박싱
+  - 박싱되어 있는 참조 타입의 객체로 부터 값 타입 객체의 복사본을 가져오는 방법이다.
+    ![](https://docs.microsoft.com/ko-kr/dotnet/csharp/programming-guide/types/media/boxing-and-unboxing/unboxing-conversion-operation.gif)
   
+- 박싱과 언박싱은 암시적으로 이뤄지며 객체에 대한 복사본을 생성하곤 하는데, 이로 인해 버그가 발생할 수도 있고 성능을 느리게 만든다.
+- 가능한한 박싱과 언박싱이 일어나지 않도록 해야 한다.
+  
+## Item 10: 베이스 클래스가 업그레이드된 경우에만 new 한정자를 사용하라
+
+  
+
