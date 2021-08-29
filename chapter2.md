@@ -1,4 +1,4 @@
-# .NET 리소스 관리
+# Effective C# Chapter2: .NET 리소스 관리
 ## Item 11: .NET 리소스 관리에 대한 이해
 - 가비지 수집기(garbage collector)
   - 관리되는 메모리(managed memory)를 관장하며 메모리 누수(memory leak), 댕글링 포인터(dangling pointer), 초기화되지 않은 포인터, 여타의 메모리 관리 문제를 개발자들이 직접 다루지 않도록 자동화 해준다.
@@ -9,8 +9,67 @@
 - 가장 좋은 방법은 IDisposable 인터페이스와 표준 Dispose 패턴을 활용하는 것이다. [Item 17: 표준 Dispose 패턴을 구현하라](#item17-dispose-pattern)
 
 ## Item 12: 할당 구문보다 멤버 초기화 구문이 좋다
+생성자 내에서 멤버 변수에 값을 할당하기보다 멤버 초기화 구문(member initializer)를 사용하는 것이 좋다. 
+```c#
+public class MyClass
+{
+  private List<string> labels = new List<string>();
+}
+```
+새로운 생성자를 추가하더라도 멤버 초기화 구문이 항상 포함되기 때문에, 새로운 생성자에서 별도로 멤버변수를 초기화할 필요가 없다.
+
+다음의 경우에는 멤버 초기화 구문을 사용하지 않는 것이 좋다.
+- 객체를 `0`이나 `null`로 초기화 하는 경우는 명시적으로 초기화할 필요가 없다.
+- 멤버 초기화 구문은 객체 생성 방법이 모든 생성자에서 동일한 경우에만 사용하는 것이 좋다.
+- 멤버 초기화 구문은 try로 감쌀 수 없으므로, 예외 처리가 반드시 필요한 경우에는 생성자 내부에 작성해야 한다.
+
 
 ## Item 13: 정적 클래스 멤버를 올바르게 초기화하라
+정적 멤버 변수를 포함하는 타입이 있다면 인스턴스를 생성하기 전에 반드시 정적 멤버 변수를 초기화해야 한다. 이를 위해 C#에서는 다음의 두 가지 기능을 제공한다.
+- 정적 멤버 초기화 구문: 간단한 경우라면 정적 생성자 대신 사용하는 것이 좋다.
+```C#
+public class MySingleton
+{
+  private static readonly MySingleton theOneAndOnly = new MySingleton();
+  
+  public static MySingleton TheOnly
+  {
+    get
+    {
+      return theOneAndOnly;
+    }
+  }
+  
+  private MySingleton()
+  {
+  }
+}
+```
+
+- 정적 생성자: 모든 메서드, 변수, 속성에 최초로 접근하기 전에 자동으로 호출되는 특이한 메서드이다. 다른 언어에서 정적 멤버를 초기화할 때 겪는 어려움을 언어 차원에서 해결해주기 위해 추가되었다. 예외 처리가 필요한 경우에는 정적 멤버 초기화 대신 정적 생성자를 사용해야 한다. 
+```C#
+public class MySingleton2
+{
+  private static readonly MySingleton2 theOneAndOnly;
+  
+  static MySingleton2()
+  {
+    theOneAndONly = new MySingleton2();
+  }
+  
+  public static MySingleton2 TheOnly
+  {
+    get
+    {
+      return theOneAndOnly;
+    }
+  }
+  
+  private MySingleton2()
+  {
+  }
+}
+```
 
 ## Item 14: 초기화 코드가 중복되는 것을 최소화하라
 
