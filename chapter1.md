@@ -1,4 +1,4 @@
-# Chapter 1: C# 언어 요소
+# Effective C# - Chapter 1: C# 언어 요소
 ## Item 1: 지역변수를 선언할 때는 var를 사용하는 것이 낫다
 - 코드를 읽을 때 타입을 명시적으로 드러내야 하는 경우가 아니라면 var를 사용하는 것이 좋다.
 - 내장 숫자 타입(int, float, double 등)을 선언할 때는 명시적으로 타입을 선언하는 편이 낫다.
@@ -42,7 +42,7 @@ var q2 = q.Where(s => s.StartWith(start));
 - as 연산자는 사용자 정의 형변환이 지원되지 않으므로, 런타임에 객체의 타입이 변환하려는 타입과 정확히 일치할 경우에만 형변환이 가능하다. (더 안전하고 효율적임)
 - 캐스트 연산자는 InvalidCastException을 발생시키므로 try/catch 문이 필요하다. (as 연산자가 더 깔끔함)
   
-## Item 4: string.Format()을 보간 문자열(string interpolation)으로 대체하라
+## <a name="item4-interpolated-string">Item 4: string.Format()을 보간 문자열(string interpolation)으로 대체하라
 - 기존에 많이 사용되던 string.Format()은 포맷 문자열과 인자 리스트를 분리해서 전달하는 구조이기 때문에 실수하기가 쉬운 구조이다.
    ```C#
    Console.WriteLine("The value of pi is {0}", Math.PI);
