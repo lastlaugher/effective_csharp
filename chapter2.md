@@ -72,9 +72,43 @@ public class MySingleton2
 ```
 
 ## Item 14: 초기화 코드가 중복되는 것을 최소화하라
+생성자의 기본 매개변수 기능을 활용하면 생성자 내의 중복 코드를 줄일 수 있다.
+```C#
+public class MyClass
+{
+  // new() 제약 조건을 만족시키려면 이 생성자가 필요하다.
+  public MyClass() :
+    this(0, string.Empty)
+  {
+  }
+  
+  public MyClass(int initialCount = 0, string name = "")
+  {
+    this.coll = (initialCount > 0) ?
+      new List<ImportantData>(initialCount) :
+      new List<ImportantData>()
+      
+    this.name = name;
+  }
+}
+```
+어떠한 경우에도 제한 없이 이런 구조를 사용하려면 매개변수가 없는 생성자를 명시적으로 작성해야 한다. new() 제약 조건을 명시한 제네릭 클래스와 함께 사용해야 할 경우에는 반드시 매개변수가 없는 생성자를 구현해야 한다.
+
+인스턴스가 생성되는 동안 모든 멤버 변수들을 가능한 한 한 번만 초기화하도록 해야 한다. 이를 위해 초기화를 가능한한 이른 시점에 수행하는 방식을 적용하는 것이 좋다.
+인스턴스를 생성할 때 수행되는 과정
+1. 정적 변수의 저장 공간을 0으로 초기화
+2. 정적 변수에 대한 초기화 구문 수행
+3. 베이스 클래스의 정적 생성자 수행
+4. 정적 생성자 수행
+5. 인스턴스 변수의 저장 공간을 0으로 초기화
+6. 인스턴스 변수에 대한 초기화 구문 수행
+7. 적절한 베이스 클래스의 인스턴스 생성자 수행
+8. 인스턴스 생성자 수행
 
 ## Item 15: 불필요한 객체를 만들지 말라
 
 ## Item 16: 생성자 내에서는 절대로 가상함수를 호출하지 마라
 
 ## <a name="item17-dispose-pattern">Item 17: 표준 Dispose 패턴을 구현하라
+
+  
