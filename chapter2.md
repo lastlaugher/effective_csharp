@@ -106,6 +106,31 @@ public class MyClass
 8. 인스턴스 생성자 수행
 
 ## Item 15: 불필요한 객체를 만들지 말라
+1. 모든 참조 타입의 객체는 설사 지역변수라 하더라도 동적으로 메모리를 할당한다. 자주 호출되는 지역변수는 멤버변수로 변경하여 재사용하는 것이 좋다.
+2. 자주 사용되는 참조 타입의 인스턴스를 정적 멤버변수로 선언하면 하나의 인스턴스를 영원히 재사용하게 된다. 다음의 예제에서는 지연 평가(lazy evaluation)를 통해 최초로 요청될 때 비로소 필요한 객체를 생성함으로써 객체 생성을 극도로 제한하고 있다.
+```C#
+public class Brushes
+{
+  private static Brush blackBrush;
+  
+  public static Brush Black
+  {
+    get
+    {
+      if (blackBrush == null)
+        blackBrush = new SolidBrush(Color.Black)
+      return blackBrush;
+    }
+  }
+}
+```
+3. 다음의 코드에서 msg 변수의 문자열이 변경되는 것이 아니라 새로운 문자열을 가진 새로운 string 객체가 반복적으로 생성된다. 이 경우에는 문자열 보간 방법([Item4: string.Format()을 보간 문자열로 대체하라](chapter1.md#item4-interpolated-string)) 또는 StringBuilder를 사용하는 것이 좋은 방법이다.
+```C#
+string msg = "Hello, ";
+msg += thisUser.Name;
+msg += ". Today is ";
+msg += System.DateTime.Now.ToString();
+```
 
 ## Item 16: 생성자 내에서는 절대로 가상함수를 호출하지 마라
 
