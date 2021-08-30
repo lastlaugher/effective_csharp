@@ -1,4 +1,4 @@
-# Effective C# Chapter2: .NET 리소스 관리
+# Effective C# - Chapter2: .NET 리소스 관리
 ## Item 11: .NET 리소스 관리에 대한 이해
 - 가비지 수집기(garbage collector)
   - 관리되는 메모리(managed memory)를 관장하며 메모리 누수(memory leak), 댕글링 포인터(dangling pointer), 초기화되지 않은 포인터, 여타의 메모리 관리 문제를 개발자들이 직접 다루지 않도록 자동화 해준다.
@@ -133,6 +133,43 @@ msg += System.DateTime.Now.ToString();
 ```
 
 ## Item 16: 생성자 내에서는 절대로 가상함수를 호출하지 마라
+```C#
+class B
+{
+  protected B()
+  {
+    VFunc()
+  }
+  
+  protected virtual void VFunc()
+  {
+    Console.WriteLine("VFunc in B");
+  }
+}
+
+class Derived : B
+{
+  private readonly string msg = "Set by initializer";
+  
+  public Derived(string msg)
+  {
+    this.msg = msg;
+  }
+  
+  protected override void VFunc()
+  {
+    Console.WriteLine(msg);
+  }
+  
+  public static void Main()
+  {
+    var d = new Derived("Constructed in main");
+  }
+```
+- C#은 생성자에 진입하는 순간 해당 객체는 초기화가 완료된 것으로 간주하기 때문에 파생 클래스의 함수가 호출되어 결과는 `Set by initializer`이다.
+- C++ 에서는 생성자를 완료해야만 해당 객체의 타입이 확정되므로 베이스 클래스의 함수가 호출되어 결과는 `VFunc in B`이다.
+
+베이스 클래스의 생성자 내에서 가상 함수를 호출하면 파생 클래스 내의 초기화 되지 않은 멤버 변수들을 참조하게 되므로 구조적으로 취약한 코드가 된다.
 
 ## <a name="item17-dispose-pattern">Item 17: 표준 Dispose 패턴을 구현하라
 
