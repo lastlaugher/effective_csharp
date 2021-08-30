@@ -172,5 +172,80 @@ class Derived : B
 베이스 클래스의 생성자 내에서 가상 함수를 호출하면 파생 클래스 내의 초기화 되지 않은 멤버 변수들을 참조하게 되므로 구조적으로 취약한 코드가 된다.
 
 ## <a name="item17-dispose-pattern">Item 17: 표준 Dispose 패턴을 구현하라
-
+.NET Framework 내부에서는 비관리 리소스를 정리하기 위해 표준화된 Dispose 패턴을 사용하고 있다. IDisposable 인터페이스를 통해서 리소스를 삭제할 수 있는 기능을 안정적으로 제공해주고, 불가피한 경우에만 finalizer를 호출하도록 하여 성능에 미치는 부정적인 영향을 최소화한다.
   
+베이스 클래스
+```C#
+public class MyResourceHog : IDisposable
+{
+    IntPtr unmanagedResource;
+  
+    // 이미 dispose 되었는지를 나타내는 플래그
+    private bool disposed = false;
+
+    public MyResourceHog()
+    {
+        // 비관리 리소스 할당.
+        // unmanagedResource = ...
+    }
+
+    // IDisposable 구현
+    // 가상 Dispose 메서드를 호출하고
+    // finalize를 회피하도록 한다.
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    // 가상 Dispose 메서드
+    protected virtual void Dispose(bool disposing)
+    {
+        // Dispose는 한 번만 수행되도록 한다.
+        if (!this.disposed)
+        {
+            if (disposing)
+            {
+                // 관리 리소스 정리
+            }
+
+            // 비관리 리소스 정리
+            unmanagedResource = IntPtr.Zero;
+
+            this.disposed = true;                
+        }
+    }
+
+    ~MyResourceHog()
+    {
+        this.Dispose(false);
+    }
+}
+```
+  
+파생 클래스
+```C#
+public class DerivedResourceHog : MyResourceHog
+{
+    // 자신만의 disposed 플래그
+    private bool disposed = false;
+
+    protected override void Dispose(bool disposing)
+    {
+        // Dispose는 한 번만 수행되도록 한다.
+        if (!this.disposed)
+        {
+            if (disposing)
+            {
+                // 관리 리소스 정리
+            }
+
+            // 비관리 리소스 정리               
+
+            this.disposed = true;
+        }
+
+        base.Dispose(disposing);
+    }
+}
+```
