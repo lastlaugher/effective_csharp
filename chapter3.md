@@ -70,6 +70,36 @@ public struct Customer : IComparable<Customer>, IComparable
 ```
 
 ## Item 21: 타입 매개변수가 IDisposable을 구현한 경우를 대비하여 제네릭 클래스를 작성하라
+아래 코드에서 타입이 IDisposable을 구현하고 있다면 메모리릭이 발생할 수 있다. 
+```C#
+public interface IEngine
+{
+  void DoWork();
+}
+
+public class EngineDriverOne<T> where T : IEngine, new()
+{
+  public void GetThingsDone()
+  {
+    T driver = new T();
+    driver.DoWork();
+  }
+}
+```
+  
+IDisaposable을 구현하고 있다면 아래처럼 추가적인 처리가 필요하다.
+```C#
+  public void GetThingsDone()
+  {
+    T driver = new T();
+    using (driver as IDisposable)
+    {
+      driver.DoWork();
+    }
+  }
+```
+
+타입 매개변수로 전달한 타입을 이용하여 멤버 변수를 선언한 경우에는 IDisposal을 구현하여 해당 리소스를 처리해야 하므로 복잡한 코드를 추가해야 한다. 매개변수로는 지역변수 정도만을 생성하는 것이 좋다.
   
 ## Item 22: 공변성과 반공변성을 지원하라
   
