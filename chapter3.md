@@ -102,7 +102,49 @@ IDisaposable을 구현하고 있다면 아래처럼 추가적인 처리가 필�
 타입 매개변수로 전달한 타입을 이용하여 멤버 변수를 선언한 경우에는 IDisposal을 구현하여 해당 리소스를 처리해야 하므로 복잡한 코드를 추가해야 한다. 매개변수로는 지역변수 정도만을 생성하는 것이 좋다.
   
 ## Item 22: 공변성과 반공변성을 지원하라
+- 타입의 가변성(variance): 특정 타입의 객체를 다른 타입의 객체로 변환할 수 있는 성격을 말한다.
+  - 공변성(covariance): X -> Y가 가능할 때 C<T>가 C<X> -> C<Y>로 가능하다면 이는 공변이다.
+  - 반공변성(contravariance) : X -> Y가 가능할 때 C<T>가 C<Y> -> C<X>로 사용 가능하다면 이는 반공변이다.
+- 가변성의 반대는 불변성(invariance)이라고 하는데, 제네릭은 기본적으로 불변이다. 제네릭의 공변/반공변을 지원하기 위해 데코레이터(decorator)를 추가해야 한다.
+- 공변성
+```C#
+public interface IEnumerable<out T> : IEnumerable
+{
+  new IEnumerator<T> GetEnumerator();
+}
+```
+IEnumerable<T>를 정의할 때 T에 대해 out 데코레이터가 사용되었는데, 이는 T를 출력 위치에서만 사용하겠다는 의미이다. 출력 위치는 다음과 같다.
+  - 함수의 반환값
+  - 속성의 get 접근자
+  - 델리게이트의 일부 위치
   
+공변성을 적용하면, 다음의 메서드에서 List<Derived> 타입의 객체를 인자로 전달이 가능하다.
+```C#
+public static void CovariantGeneric(IEnumerable<Base> baseItems)
+{
+  foreach (var thing in baseItems)
+    Console.WriteLine($"{thing.var1} {thing.var2}");
+}
+```
+  
+- 반공변성
+```C#
+public interface IComparable<in T>
+{
+  int CompareTo(T other);
+}
+```
+매개변수 타입 T에 in 데코레이터를 사용하면, T를 입력 위치에서 사용하겠다는 의미이다. 입력 위치는 다음과 같다.
+  - 메서드의 매개변수
+  - 속성의 set 접근자
+  - 델리게이트의 일부 위치
+  
+반공변성을 적용하면, 다음의 예제처럼 Base 인스턴스와 Derived 인스턴스의 비교가 가능하다.
+```C#
+IComparable<Base> baseObject = new Base();
+baseObject.CompareTo(new Derived());
+```
+
 ## Item 23: 타입 매개변수에 대해 메서드 제약 조건을 설정하려면 델리게이트를 활용하라
   
 ## Item 24: 베이스 클래스나 인터페이스에 대해서 제네릭을 특화하지 말라
