@@ -214,12 +214,43 @@ static void WriteMessage<T>(T obj)
     WriteMessage((IMessageWriter)obj);
   else
     WriteLine(obj.ToString());
+}
+```
+ 
+## Item 25: 타입 매개변수로 인스턴스 필드를 만들 필요가 없다면 제네릭 메서드를 정의하라
+- *제네릭 클래스*를 정의하면 클래스 전체에 대해서 제약 조건을 고려해야 한다. 제약 조건의 적용 범위가 넓어지면 코드를 수정하기가 점점 까다롭다.
+- 유틸리티 성격의 클래스를 만들 때 일반 클래스 내에 *제네릭 메서드*들을 배치하면 각 메서드별로 제약 조건을 달리 설정할 수 있고, 사용자 입장에서도 메서드를 활용하기가 수월해진다.
+- 타입 매개변수로 인스턴스 필드를 만들어야 하는 경우에는 *제네릭 클래스*를 작성하고, 그 이외에는 *제네릭 메서드*를 작성하라.
+  
+다음의 제네릭 클래스를 사용할 때 항상 타입 매개변수를 명시적으로 지정해야 하기 때문에 번거로움이 있다.
+```C#
+public static class Utils<T>
+{
+  public static T Max(T left, T right) => Comparer<T>.Default.Compare(left, right) < 0 ? right : left;
+  public static T Min(T left, T right) => Comparer<T>.Default.Compare(left, right) < 0 ? left : right;
+}
+                                                                                      
+Utils<double>.Max(4.1, 5.2);
+Utils<string>.Max("foo", "bar");
+```
+다음처럼 일반 클래스에 제네릭 메서드를 사용하면 타입에 가장 잘 부합하는 최상의 메서드가 자동으로 선택되게 할 수 있다. 그리고 더 이상 타입 매개변수를 지정할 필요가 없다.
+```C#
+public static class Utils
+{
+  public static T Max(T left, T right) => Comparer<T>.Default.Compare(left, right) < 0 ? right : left;
+  public static double Max(double left, double right) => Math.Max(left, right);
+                                                                                      
+  public static T Min(T left, T right) => Comparer<T>.Default.Compare(left, right) < 0 ? left : right;
+  public static double Min(double left, double right) => Math.Min(left, right);
+}
+                                                                                      
+Utils.Max(4.1, 5.2);
+Utils.Max("foo", "bar");
 ```
 
-[완벽히 이해하지는 못해서 나중에 더 공부가 필요함]
-  
-## Item 25: 타입 매개변수로 인스턴스 필드를 만들 필요가 없다면 제네릭 메서드를 정의하라
-
+반드시 제네릭 클래스를 작성해야 하는 경우
+1. 클래스 내에 타입 매개변수로 주어진 타입으로 내부 상태를 유지해야 하는 경우 (컬렉션)
+2. 제네릭 인터페이스를 구현하는 클래스를 만들어야 할 경우
   
 ## Item 26: 제네릭 인터페이스와 논제네릭 인터페이스를 함께 구현하라
   
