@@ -146,7 +146,43 @@ baseObject.CompareTo(new Derived());
 ```
 
 ## Item 23: 타입 매개변수에 대해 메서드 제약 조건을 설정하려면 델리게이트를 활용하라
+타입 매개변수에 제약 조건을 설정하는 방법
+  1. 베이스 클래스의 타입이나 특정 인터페이스로 제약 조건 설정
+  2. class 타입이나 struct 타입으로 형태를 제한
+  3. new() 키워드를 사용해서 매개변수가 없는 생성자를 가져야 하는 조건
+
+임의의 정적 메서드를 반드시 구현해야 하는 제약 조건을 설정하기 위해서는 복잡한 작업이 필요하다. 예를 들어, 2개의 T 객체를 더하는 메서드가 반드시 구현되야 하는 제약 조건을 설정하기 위해 IAdd<T> 인터페이스를 정의하고, 구현하는 클래스를 생성하고, Add() 메서드를 구현해야 한다.
+이 방법보다는 제약 조건으로 설정하고 싶은 메서드의 델리게이트를 작성하는 것이 좋다. 아래에서는 System.Func<T1, T2, TOutput> 델리게이트를 사용했다.
+```C#
+public static class Example
+{
+  public static T Add<T>(T left, T right, Func<T, T, T> AddFunc) => AddFunc(left, right);
+}
+```
+이 클래스의 사용자는 다음처럼 람다 표현식을 이용하여 제네릭 클래스가 호출할 AddFunc 메서드를 정의하면 된다.
+```C#
+int a = 6;
+int b = 7;
+int sum = Example.Add(a, b, (x, y) => x + y);
+```
+
+Enumerable.Zip 이라는 메서드도 비슷한 방식으로 구현이 되었다.
+```C#
+public static IEnumerable<TOutput> Zip<T1, T2, TOutput>(IEnumerable<T1> left, IEnumerable<T2> right, Func<T1, T2, TOutput> generator)
+{
+  IEnumerator<T1> leftSequence = left.GetEnumerator();
+  IEnumerator<T2> rightSequence = right.GetEnumerator();
   
+  while (leftSequence.MoveNext() && rightSequence.MoveNext())
+  {
+    yeild return generator(leftSequence.Current, rightSequence.Current);
+  }
+  
+  leftSequece.Dispose();
+  rightSequece.Dispose();
+}
+```
+
 ## Item 24: 베이스 클래스나 인터페이스에 대해서 제네릭을 특화하지 말라
   
 ## Item 25: 타입 매개변수로 인스턴스 필드를 만들 필요가 없다면 제네릭 메서드를 정의하라
