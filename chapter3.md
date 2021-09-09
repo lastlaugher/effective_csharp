@@ -184,8 +184,42 @@ public static IEnumerable<TOutput> Zip<T1, T2, TOutput>(IEnumerable<T1> left, IE
 ```
 
 ## Item 24: 베이스 클래스나 인터페이스에 대해서 제네릭을 특화하지 말라
+컴파일러는 제네릭 메서드의 타입 매개변수가 다른 타입으로 다양하게 변경될 수 있음을 고려하여 오버로드된 메서드 중 하나를 선택한다.
+
+```C#
+public class Base {}
+
+public class Derived : Base {}
+
+class Program
+{
+  static void Overloaded(Base b);
+  static void Overloaded<T>(T obj);
+  
+  static void Main(string[] args)
+  {
+    Derived d = new Derived();
+    Overloaded(d);        // Overloaded<T>(T obj)가 Overloaded(Base b)보다 우선적으로 호출된다. T가 Derived로 대체되면 정확히 일치하기 때문이다.
+    Overloaded((Base)d);  // 명시적 형변환에 맞게 Overloaded(Base b) 가 호출된다.
+  }
+}
+```
+이러한 동작 방식때문에 베이스 클래스와 파생 클래스에 대해서 모두 수행 가능하도록 하기 위해서 제네릭을 특화(specialization)하려는 시도는 바람직하지 않다. 특히 인터페이스에 대해서 제네릭을 특화하면 오류가 발생할 가능성이 너무 높다. 제네릭 특화가 아니라 타입 매개변수로 지정할 수 있는 타입별로 각각 특화된 코드를 작성하는 편이 나을 수도 있다. 다음이 그러한 예제이다.
+```C#
+static void WriteMessage<T>(T obj)
+{
+  if (obj is MyBase)
+    WriteMessage(obj as MyBase);
+  else if (obj is IMessageWriter)
+    WriteMessage((IMessageWriter)obj);
+  else
+    WriteLine(obj.ToString());
+```
+
+[완벽히 이해하지는 못해서 나중에 더 공부가 필요함]
   
 ## Item 25: 타입 매개변수로 인스턴스 필드를 만들 필요가 없다면 제네릭 메서드를 정의하라
+
   
 ## Item 26: 제네릭 인터페이스와 논제네릭 인터페이스를 함께 구현하라
   
