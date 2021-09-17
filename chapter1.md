@@ -4,7 +4,7 @@
 - 내장 숫자 타입(int, float, double 등)을 선언할 때는 명시적으로 타입을 선언하는 편이 낫다.
 - 타입을 명시적으로 지정하면 잘못된 동작을 미연에 방지할 수 있다.
 
-아래의 코드는 심각한 성능 문제를 유발한다. LINQ 쿼리는 IQueryable<string> 타입을 반환하지만, IEnumerable<string>으로 선언했으므로 IQueryable<string>의 장점을 잃게 된다. (IQueryable<T>가 IEnumerable<T>를 상속)
+아래의 코드는 심각한 성능 문제를 유발한다. LINQ 쿼리는 IQueryable<string> 타입을 반환하지만, IEnumerable<string>으로 선언했으므로 IQueryable\<string\>의 장점을 잃게 된다. (IQueryable\<T\>가 IEnumerable\<T\>를 상속)
 ```c#
 IEnumerable<string> q =
   from c in db.Customers
