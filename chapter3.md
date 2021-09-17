@@ -12,15 +12,15 @@ new 로 객체를 생성하는 방법 대신 default()를 사용하면 new() 제
 - 어떤 알고리즘이 특정 타입에 대해 더 효율적으로 동작한다면 그냥 그 타입을 이용하도록 코드를 작성하라.
 
 (예제) ReverseEnumerable<T> 클래스 작성
-- IEnumerable<T> 타입(랜덤 액세스 불가)과 IList<T> 타입(랜덤 액세스 가능)의 생성자를 별도로 작성한다.
-- string 은 IList<char>를 구현한 것이 아니므로 (그렇게 보이지만) string에서 제공해주는 고유의 메서드를 사용하기 위해서는 특화된 코드를 작성한다.
+- IEnumerable\<T\> 타입(랜덤 액세스 불가)과 IList\<T\> 타입(랜덤 액세스 가능)의 생성자를 별도로 작성한다.
+- string 은 IList\<char\>를 구현한 것이 아니므로 (그렇게 보이지만) string에서 제공해주는 고유의 메서드를 사용하기 위해서는 특화된 코드를 작성한다.
 
-## Item 20: IComparable<T>와 IComparer<T>를 이용하여 객체의 선후 관계를 정의하라
+## Item 20: IComparable\<T\>와 IComparer\<T\>를 이용하여 객체의 선후 관계를 정의하라
 컬렉션을 정렬하거나 검색하려면 객체의 선후 관계를 판단할 수 있는 기능을 정의해야 한다.
 IComparable<T>: 타입의 기본적인 선후 관계를 정의
 IComparer<T>: 기본적인 선후 관계 이외에 추가적인 선후 관계를 정의할 수 있다.
   
-최신 API들은 IComparable<T>를 사용하지만 오래된 API들은 여전히 IComparable을 사용한다. 따라서 IComparable<T>와 IComparable도 함께 구현해야 한다. 추가로 관계 연산자들을 오버로딩하면 더 빠르게 비교 연산을 수행할 수 있다.
+최신 API들은 IComparable<\T\>를 사용하지만 오래된 API들은 여전히 IComparable을 사용한다. 따라서 IComparable\<T\>와 IComparable도 함께 구현해야 한다. 추가로 관계 연산자들을 오버로딩하면 더 빠르게 비교 연산을 수행할 수 있다.
 ```C#
 public struct Customer : IComparable<Customer>, IComparable
 {
@@ -103,8 +103,8 @@ IDisaposable을 구현하고 있다면 아래처럼 추가적인 처리가 필�
   
 ## Item 22: 공변성과 반공변성을 지원하라
 - 타입의 가변성(variance): 특정 타입의 객체를 다른 타입의 객체로 변환할 수 있는 성격을 말한다.
-  - 공변성(covariance): X -> Y가 가능할 때 C<T>가 C<X> -> C<Y>로 가능하다면 이는 공변이다.
-  - 반공변성(contravariance) : X -> Y가 가능할 때 C<T>가 C<Y> -> C<X>로 사용 가능하다면 이는 반공변이다.
+  - 공변성(covariance): X -> Y가 가능할 때 C\<T\>가 C\<X\> -> C\<Y\>로 가능하다면 이는 공변이다.
+  - 반공변성(contravariance) : X -> Y가 가능할 때 C\<T\>가 C\<Y\> -> C\<X\>로 사용 가능하다면 이는 반공변이다.
 - 가변성의 반대는 불변성(invariance)이라고 하는데, 제네릭은 기본적으로 불변이다. 제네릭의 공변/반공변을 지원하기 위해 데코레이터(decorator)를 추가해야 한다.
 - 공변성
 ```C#
@@ -118,7 +118,7 @@ IEnumerable<T>를 정의할 때 T에 대해 out 데코레이터가 사용되었�
   - 속성의 get 접근자
   - 델리게이트의 일부 위치
   
-공변성을 적용하면, 다음의 메서드에서 List<Derived> 타입의 객체를 인자로 전달이 가능하다.
+공변성을 적용하면, 다음의 메서드에서 List\<Derived\> 타입의 객체를 인자로 전달이 가능하다.
 ```C#
 public static void CovariantGeneric(IEnumerable<Base> baseItems)
 {
@@ -152,7 +152,7 @@ baseObject.CompareTo(new Derived());
   3. new() 키워드를 사용해서 매개변수가 없는 생성자를 가져야 하는 조건
 
 임의의 정적 메서드를 반드시 구현해야 하는 제약 조건을 설정하기 위해서는 복잡한 작업이 필요하다. 예를 들어, 2개의 T 객체를 더하는 메서드가 반드시 구현되야 하는 제약 조건을 설정하기 위해 IAdd<T> 인터페이스를 정의하고, 구현하는 클래스를 생성하고, Add() 메서드를 구현해야 한다.
-이 방법보다는 제약 조건으로 설정하고 싶은 메서드의 델리게이트를 작성하는 것이 좋다. 아래에서는 System.Func<T1, T2, TOutput> 델리게이트를 사용했다.
+이 방법보다는 제약 조건으로 설정하고 싶은 메서드의 델리게이트를 작성하는 것이 좋다. 아래에서는 System.Func\<T1, T2, TOutput\> 델리게이트를 사용했다.
 ```C#
 public static class Example
 {
@@ -264,8 +264,8 @@ public override bool Equals(object obj)
     return false;
 }
 ```
-- 객체 간의 동일성 비교를 위해 IEquality<T>를 구현했다면 operator==와 operator!=도 함께 구현해야 한다.
-- 객체 간의 선후 관계 비교를 위해 IComparable<T>를 구현했다면 논제네릭 버전은 IComparable 인터페이스도 함께 구현해야 한다. 추가로 operator<와 operator>도 구현해야 한다.
+- 객체 간의 동일성 비교를 위해 IEquality\<T\>를 구현했다면 operator==와 operator!=도 함께 구현해야 한다.
+- 객체 간의 선후 관계 비교를 위해 IComparable\<T\>를 구현했다면 논제네릭 버전은 IComparable 인터페이스도 함께 구현해야 한다. 추가로 operator<와 operator>도 구현해야 한다.
 - 동일성과 선후 비교를 동시에 지원하는 경우에 operator<=와 operator>=도 구현해야 한다.
   
 ## Item 27: 인터페이스는 간략히 정의하고 기능의 확장은 확장 메서드를 사용하라
