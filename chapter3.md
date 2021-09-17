@@ -253,6 +253,20 @@ Utils.Max("foo", "bar");
 2. 제네릭 인터페이스를 구현하는 클래스를 만들어야 할 경우
   
 ## Item 26: 제네릭 인터페이스와 논제네릭 인터페이스를 함께 구현하라
+새로운 라이브러리를 개발할 때 제네릭 타입뿐만 아니라 고전적인 방식도 함께 지원한다면 라이브러리의 활용도를 좀 더 높일 수 있다.
+- 제네릭은 비슷한 정보를 담고 있지만 타입이 다른 경우 (Store.Order와 Shipping.Order)에 동일성을 비교하는 작업을 잘 해내지 못한다. 이런 경우 제네릭 대신에 System.Object를 이용하여 동일성을 비교하는 메서드를 다음과 같이 구현할 수 있다.
+```C#
+public override bool Equals(object obj)
+{
+  if (obj.GetType() == typeof(Name))
+    return this.Equals(obj as Name);    // IEquatable<T>.Equals() 를 구현한 메서드
+  else
+    return false;
+}
+```
+- 객체 간의 동일성 비교를 위해 IEquality<T>를 구현했다면 operator==와 operator!=도 함께 구현해야 한다.
+- 객체 간의 선후 관계 비교를 위해 IComparable<T>를 구현했다면 논제네릭 버전은 IComparable 인터페이스도 함께 구현해야 한다. 추가로 operator<와 operator>도 구현해야 한다.
+- 동일성과 선후 비교를 동시에 지원하는 경우에 operator<=와 operator>=도 구현해야 한다.
   
 ## Item 27: 인터페이스는 간략히 정의하고 기능의 확장은 확장 메서드를 사용하라
   
