@@ -269,6 +269,19 @@ public override bool Equals(object obj)
 - 동일성과 선후 비교를 동시에 지원하는 경우에 operator<=와 operator>=도 구현해야 한다.
   
 ## Item 27: 인터페이스는 간략히 정의하고 기능의 확장은 확장 메서드를 사용하라
-  
+- 확장 메서드(extension method)를 사용하면 인터페이스에 새로운 동작을 추가할 수 있다. 인터페이스에는 가능한 한 최소한의 기능만을 정의하고, 확장 메서드를 함께 구현하면 손쉽게 기능을 확장할 수 있다. System.Linq.Enumerable 클래스가 이 기법을 활용해서 IEnuerable\<T\>에 대해 정의된 50개 이상의 확장 메서드를 포함하고 있다.
+- 특정 인터페이스에 대하여 확장 메서드가 구현돼 있고, 이 인터페이스를 구현한 클래스가 확장 메서드에서 구현한 메서드와 동일한 원형의 메서드를 이미 구현하고 있는 경우 컴파일러는 확장 메서드보다 클래스 내에 구현된 메서드를 우선적으로 호출한다. 하지만 인터페이스 타입의 객체를 통해 메서드를 호출하면 확장 메서드가 호출된다. 이 경우에는 두 메서드가 의미적으로 완전히 동일한 작업을 수행하도록 작성해야 한다.
+
 ## Item 28: 확장 메서드를 이용하여 구체화된 제네릭 타입을 개선하라
+기존에 사용 중인 컬렉션 타입에 영향을 주지 않으면서 새로운 기능을 추가하고 싶다면 구체화된 컬렉션 타입에 대해 확장 메서드를 작성하면 된다. System.Linq.Enuemerable에는 IEnumerable\<T\> 타입을 특정 타입으로 구체화했을 때만 사용할 수 있는 메서드들이 상당수 포함되어 있다. 예를 들어, 아래처럼 해당 타입에 대하여 가장 효과적으로 동작하도록 코드를 분리하여 구현한 방법이다.
+```C#
+public static class Enumerate
+{
+  public static int Average(this IEnumerable<int> sequence);
+  public static int Max(this IEnumerable<int> sequence);
+  public static int Min(this IEnumerable<int> sequence);
+  public static int Sum(this IEnumerable<int> sequence);
+}
+```
+
   
